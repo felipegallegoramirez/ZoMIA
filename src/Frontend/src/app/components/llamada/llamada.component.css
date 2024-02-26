@@ -1,0 +1,15 @@
+.video{
+    width: 70%;
+    min-width: 800px;
+    margin: 200px 15%;
+    display: inline-block;
+}
+
+.video>video{
+    width: calc(50% - 20px);
+    margin: 0px 5px;
+    display: inline-block;
+    border-radius: 20px;
+    border: 1px solid black;
+    box-shadow: 10px 5px 5px rgba(53, 53, 53, 0.712);
+}

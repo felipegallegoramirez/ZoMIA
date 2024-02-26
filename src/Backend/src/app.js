@@ -15,18 +15,8 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-const whitelist = process.env.URL_ACEPTED || ['http://localhost:8080', 'https://myapp.co, http://localhost:4200'];
-const options = {
-  origin: (origin, callback) => {
-    if (whitelist.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(null, true);
-    }
-  }
-}
 app.set('trust proxy', true);
-app.use(cors(options));
+app.use(cors());
 
 
 //app.use('/public/images', express.static(path.resolve('public/storage/r')));
@@ -41,25 +31,39 @@ app.use(errorHandler);
 
 
 // Socket.io
-const server = require('http').Server(app)
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+
+require('http').Server(app)
 const io = require('socket.io')(server, {
-  options: {
-      cors: '*'
+  cors: {
+      origin: ['http://localhost:3000', 'http://localhost:4200', '*'],
+      methods: ['GET', 'POST'] // Puedes ajustar los métodos según tus necesidades
   }
 });
 
-io.on('connection', (socket) => {
-  socket.on('join', (data) => {
-      const roomName = data.roomName;
-      socket.join(roomName);
-      socket.to(roomName).broadcast.emit('new-user', data)
 
-      socket.on('disconnect', () => {
-          socket.to(roomName).broadcast.emit('bye-user', data)
-      })
-  })
+
+io.on('connection', (socket) => {
+  socket.on("join", async (data) => {
+    console.log(data.room)
+    socket.join(data.room);
+  });
+
+  socket.on('joinR', async (data) => {
+    io.to(data.room).emit('call', data)
 })
 
+socket.on('mirame', async (data) => {
+  io.to(data.room).emit('miras', data)
+})
+});
+
+
+
+
+//peerjs --port 9000
 
 server.listen(port, () => {
   console.log('Mi port ' +  port);
