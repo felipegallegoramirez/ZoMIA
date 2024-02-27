@@ -49,6 +49,16 @@ BookingCtrl.editBooking = async (req, res, next) => {
         const parts = video.split(".");
         await converter(video, parts[0])
 
+        let save = await Booking.findById(id);
+        console.log(save.video.length)
+        if (save.video.length> 0){
+            await openAi(`${parts[0]}.mp3`,save.video[0]);
+            save.video.pop()
+        }else{
+            save.video.push(`${parts[0]}.mp3`)
+        }
+        const res = await Booking.findByIdAndUpdate(save._id,save)
+
         res.status(200).send({ status: "Nice" })
     } catch (err) {
         res.status(400).send(err)
@@ -65,7 +75,19 @@ BookingCtrl.deleteBooking = async (req, res, next) => {
     }
 };
 
+const { whisper,resumen } = require("../utils/openai");
 
+ const openAi = async (video1,video2) =>{
+    const transcription = await whisper(video1,video2)
+    const dep = await resumen(transcription.transcription1.text,transcription.transcription2.text)
+    const data =dep.split("'");
+    //Pues, me fue muy bien, gracias, concuerdo contigo deberiamos hacer la lista prontamente
+    const res = data[3];
+    const pen = data[7];
+    console.log(res)
+    console.log(pen)
 
+    
+ }
 
 module.exports = BookingCtrl;
