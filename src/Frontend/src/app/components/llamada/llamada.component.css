@@ -1,15 +1,36 @@
 .video{
-    width: 70%;
-    min-width: 800px;
-    margin: 200px 15%;
+    width: 1080px;
+    margin: 200px calc((100vw - 1080px )/2);
     display: inline-block;
+    margin-bottom: 20px;
 }
 
 .video>video{
-    width: calc(50% - 20px);
-    margin: 0px 5px;
+    height: 400px;
+    width: calc(50% - 60px);
+    margin: 0px 15px;
     display: inline-block;
-    border-radius: 20px;
+    border-radius: 10px;
+    object-fit: cover;
     border: 1px solid black;
-    box-shadow: 10px 5px 5px rgba(53, 53, 53, 0.712);
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.button{
+    display: flex;
+    width: 1080px;
+    margin: 200px calc((100vw - 1080px )/2);
+    margin-top: 0px;
+}
+
+button{
+    color: var(--w);
+    outline: none;
+    border: none;
+    background: var(--b1);
+    padding: 10px;
+    box-sizing: border-box;
+    width: calc(50% - 60px);
+    margin: 0px 15px;
+    border-radius: 5px;
 }
