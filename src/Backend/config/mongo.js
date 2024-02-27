@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const dbConnect = () => {
-    const DB_URI = process.env.DB_URI || "mongodb://0.0.0.0:27017/Citas"
+    const DB_URI = process.env.DB_URI || "mongodb://0.0.0.0:27017/ZoMIA"
     mongoose.connect(DB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: false

@@ -3,30 +3,14 @@ const mongoose = require("mongoose");
 //const mongoosePaginateAggregate = require("mongoose-aggregate-paginate-v2");
 const StorageScheme = new mongoose.Schema(
   {
-    profesional: {
+    video: [{
       type: String,
       required: true,
-    },
-    service: {
+    }],
+    response: {
       type: String,
-      required: true,
     },
-    user: {
-      type: String,
-      required: true,
-    },
-    day: {
-      type: Number,
-      required: true,
-    },
-    month: {
-      type: Number,
-      require: true
-    },
-    hour: {
-      type: Number,
-      require: true
-    },
+    
 
   },
 
