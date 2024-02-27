@@ -1,23 +1,26 @@
-const ffmpeg = require('fluent-ffmpeg');
-const path = require('path');
+const ffmpeg = require('ffmpeg');
 
-const inputFilePath = 'input.webm';
-const outputFilePath = 'output.mp3';
 
-const converter = (input, output) => {
-  return new Promise((resolve, reject) => {
-      ffmpeg(`${__dirname}/../storage/${input}`)
-          .toFormat('mp3')
-          .on('end', () => {
-              console.log('Conversion complete');
-              resolve();
-          })
-          .on('error', (err) => {
-              console.error('Error converting file:', err);
-              reject(err);
-          })
-          .save(`${output}.mp3`);
-  });
-};
+const converter = async (input, output) => {
+    try {
+        var process = await new Promise((resolve, reject) => {
+            var process = new ffmpeg(`${__dirname}/../storage/${input}`);
+            process.then(resolve).catch(reject);
+        });
 
-export {converter}
+        await new Promise((resolve, reject) => {
+            process.fnExtractSoundToMP3(`${__dirname}/../storage/${output}.mp3`, function (error, file) {
+                if (!error) {
+                    console.log('Audio file: ' + file);
+                    resolve();
+                } else {
+                    reject(error);
+                }
+            });
+        });
+    } catch (err) {
+        console.log('Error: ' + err);
+    }
+}
+
+module.exports = { converter }

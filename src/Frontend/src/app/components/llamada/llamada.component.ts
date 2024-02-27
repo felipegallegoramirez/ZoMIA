@@ -4,6 +4,7 @@ import { PeerService } from '../../services/peer.service'
 
 
 import { Router, ActivatedRoute } from '@angular/router';
+import { BookingService } from '../../services/booking.service';
 
 @Component({
   selector: 'app-llamada',
@@ -12,7 +13,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class LlamadaComponent implements OnInit {
 
-  constructor(private socketsService:WebSocketService,private peerService:PeerService,private activatedRoute: ActivatedRoute) { }
+  constructor(
+    private socketsService:WebSocketService,
+    private peerService:PeerService,
+    private activatedRoute: ActivatedRoute,
+    private bookingService:BookingService) { }
     data:any =null;
 
   ngOnInit(): void {
@@ -104,6 +109,7 @@ export class LlamadaComponent implements OnInit {
 
       this.mediaRecorder.addEventListener('stop', () => {
         const blob = new Blob(this.chunks); // Cambiado a tipo de audio MP3
+        /*
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         document.body.appendChild(a);
@@ -112,6 +118,12 @@ export class LlamadaComponent implements OnInit {
         a.download = 'audio_recording.mp3'; // Cambiado a extensión MP3
         a.click();
         window.URL.revokeObjectURL(url);
+*/
+        var file = new File([blob], "name");
+        this.bookingService.putBooking(file,"asd").subscribe(res=>{
+          console.log(res)
+        })
+      
     });
   
 

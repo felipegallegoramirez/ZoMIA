@@ -45,17 +45,11 @@ BookingCtrl.getBooking = async (req, res, next) => {
 BookingCtrl.editBooking = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { video } = req.body;
+        const  video  = req.file.filename;
         const parts = video.split(".");
-        converter(video, parts[0]).then(() => {
-            console.log('Conversion completa');
-        }).catch(err => {
-            console.error('Error:', err);
-        });
+        await converter(video, parts[0])
 
-
-        save = await Booking.findByIdAndUpdate(id, { $set: req.body }, { new: true });
-        res.status(200).send(save)
+        res.status(200).send({ status: "Nice" })
     } catch (err) {
         res.status(400).send(err)
     }
