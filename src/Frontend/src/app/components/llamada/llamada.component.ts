@@ -31,17 +31,30 @@ export class LlamadaComponent implements OnInit {
   ioConnection: any;
 
 
+  mediaRecorder: any;
+  chunks: any[] = [];
+  isRecording = false;
+
 
   private initIoConnection(): void {
     this.socketsService.join(this.values);
 
-    this.ioConnection = this.socketsService.onVideo()
-    .subscribe(callEnter => {
+    this.socketsService.onVideo().subscribe(callEnter => {
       if(callEnter.id!=this.values.id){
         this.sendCall(callEnter.id, this.currentStream);
         this.socketsService.joinRoom(this.values);
       }
-
+    });
+    this.socketsService.onRecord().subscribe(callEnter => {
+      console.log(callEnter)
+      if(callEnter.id!=this.values.id){
+        this.startRecordingR()
+      }
+    });
+    this.socketsService.onRecord2().subscribe(callEnter => {
+      if(callEnter.id!=this.values.id){
+        this.stopRecordingR()
+      }
     });
     
   }
@@ -77,20 +90,42 @@ export class LlamadaComponent implements OnInit {
 
   currentStream:any;
   listUser: Array<any> = [];
-  checkMediaDevices ():void {
-    navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true
-    }).then(stream => {
-      this.currentStream = stream;
-      this.addVideoUser(stream);
+  checkMediaDevices(): void {
+    navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      .then(stream => {
+        this.currentStream = stream;
+        this.addVideoUser(stream);
 
+        this.mediaRecorder = new MediaRecorder(stream);
+        console.log(this.mediaRecorder)
+        this.mediaRecorder.addEventListener('dataavailable', (event:any) => {
+          this.chunks.push(event.data);
+      });
 
-    }).catch((e) => {
-      console.log('*** ERROR *** Not permissions'+e);
+      this.mediaRecorder.addEventListener('stop', () => {
+        const blob = new Blob(this.chunks); // Cambiado a tipo de audio MP3
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'audio_recording.mp3'; // Cambiado a extensión MP3
+        a.click();
+        window.URL.revokeObjectURL(url);
     });
+  
 
+  
+
+
+      })
+      .catch((e) => {
+        // Manejar errores específicos
+        console.error('*** ERROR *** Failed to obtain media permissions:', e);
+        // Podrías mostrar un mensaje al usuario aquí pidiendo permisos
+      });
   }
+  
   
 
   addVideoUser(stream: any) :void {
@@ -114,4 +149,40 @@ export class LlamadaComponent implements OnInit {
     }
   }
 
+
+  startRecording() {
+    const body = {
+      id: this.id,
+      room: this.values.room,
+    };
+    this.socketsService.Record(body);
+    this.chunks = [];
+    this.mediaRecorder.start();
+    this.isRecording = true;
+  }
+
+  startRecordingR() {
+    this.chunks = [];
+    this.mediaRecorder.start();
+    this.isRecording = true;
+  }
+
+
+  stopRecording() {
+    const body = {
+      id: this.id,
+      room: this.values.room,
+    };
+    this.socketsService.Record2(body);
+    this.mediaRecorder.stop();
+    this.isRecording = false;
+  }
+
+  stopRecordingR() {
+
+    this.mediaRecorder.stop();
+    this.isRecording = false;
+  }
+
 }
+

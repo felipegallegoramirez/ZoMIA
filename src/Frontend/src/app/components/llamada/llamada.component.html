@@ -3,3 +3,9 @@
     <video id="a" muted autoplay ></video>
     <video id="b" autoplay></video>
 </div>
+
+<div>
+    <button (click)="startRecording()" [disabled]="isRecording">Start Recording</button>
+    <button (click)="stopRecording()" [disabled]="!isRecording">Stop Recording</button>
+  </div>
+  

@@ -47,12 +47,21 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
   socket.on("join", async (data) => {
-    console.log(data.room)
     socket.join(data.room);
   });
 
   socket.on('joinR', async (data) => {
     io.to(data.room).emit('call', data)
+})
+
+socket.on('arecord', async (data) => {
+  console.log('arecord')
+  io.to(data.room).emit('record', data)
+})
+
+socket.on('arecord2', async (data) => {
+  console.log('arecord2')
+  io.to(data.room).emit('record2', data)
 })
 
 socket.on('mirame', async (data) => {
