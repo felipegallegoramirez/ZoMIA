@@ -34,3 +34,9 @@ button{
     margin: 0px 15px;
     border-radius: 5px;
 }
+
+.button>button:disabled {
+    /* Estilos que deseas aplicar cuando el botón está deshabilitado */
+    opacity: 0.5; /* Por ejemplo, cambiar la opacidad */
+    cursor: not-allowed; /* Cambiar el cursor */
+  }
